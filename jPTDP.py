@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if options.predictFlag:
         with open(options.params, 'r') as paramsfp:
             words, w2i, c2i, pos, rels, stored_opt = pickle.load(paramsfp)
-            stored_opt.external_embedding = None
+            stored_opt.external_embedding = None 
         print ('Loading pre-trained model')
         parser = learner.jPosDepLearner(words, pos, rels, w2i, c2i, stored_opt)
         parser.Load(options.model)
