@@ -37,13 +37,13 @@ if __name__ == '__main__':
     if options.predictFlag:
         with open(options.params, 'r') as paramsfp:
             words, w2i, c2i, pos, rels, stored_opt = pickle.load(paramsfp)
-	    stored_opt.external_embedding = None
-        print 'Loading pre-trained model'
+            stored_opt.external_embedding = None
+        print ('Loading pre-trained model')
         parser = learner.jPosDepLearner(words, pos, rels, w2i, c2i, stored_opt)
         parser.Load(options.model)
         
         testoutpath = os.path.join(options.output, options.conll_test_output)
-        print 'Predicting POS tags and parsing dependencies'
+        print ('Predicting POS tags and parsing dependencies')
         #ts = time.time()
         #test_pred = list(parser.Predict(options.conll_test))
         #te = time.time()
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         if os.path.isfile(os.path.join(options.output, options.params)) and \
                 os.path.isfile(os.path.join(options.output, os.path.basename(options.model))) :
 
-            print 'Found a previous saved model => Loading this model'
+            print ('Found a previous saved model => Loading this model')
             with open(os.path.join(options.output, options.params), 'r') as paramsfp:
                 words, w2i, c2i, pos, rels, stored_opt = pickle.load(paramsfp)
             stored_opt.external_embedding = None
@@ -98,20 +98,20 @@ if __name__ == '__main__':
                             uasCount += 1
                         count += 1
 
-                print "---\nLAS accuracy:\t%.2f" % (float(lasCount) * 100 / count)
-                print "UAS accuracy:\t%.2f" % (float(uasCount) * 100 / count)
-                print "POS accuracy:\t%.2f" % (float(posCount) * 100 / count)
-                print "POS&LAS:\t%.2f" % (float(poslasCount) * 100 / count)
+                print ("---\nLAS accuracy:\t%.2f" % (float(lasCount) * 100 / count))
+                print ("UAS accuracy:\t%.2f" % (float(uasCount) * 100 / count))
+                print ("POS accuracy:\t%.2f" % (float(posCount) * 100 / count))
+                print ("POS&LAS:\t%.2f" % (float(poslasCount) * 100 / count))
 
                 score = float(poslasCount) * 100 / count
                 if score >= highestScore:
                     parser.Save(os.path.join(options.output, os.path.basename(options.model)))
                     highestScore = score
 
-                print "POS&LAS of the previous saved model: %.2f" % (highestScore)
+                print ("POS&LAS of the previous saved model: %.2f" % (highestScore))
 
         else:
-            print 'Extracting vocabulary'
+            print ('Extracting vocabulary')
             words, w2i, c2i, pos, rels = utils.vocab(options.conll_train)
 
             with open(os.path.join(options.output, options.params), 'w') as paramsfp:
@@ -122,7 +122,7 @@ if __name__ == '__main__':
         
 
         for epoch in xrange(options.epochs):
-            print '\n-----------------\nStarting epoch', epoch + 1
+            print ('\n-----------------\nStarting epoch', epoch + 1)
 
             if epoch % 10 == 0:
                 if epoch == 0:
@@ -161,10 +161,10 @@ if __name__ == '__main__':
                             uasCount += 1
                         count += 1
                         
-                print "---\nLAS accuracy:\t%.2f" % (float(lasCount) * 100 / count)
-                print "UAS accuracy:\t%.2f" % (float(uasCount) * 100 / count)
-                print "POS accuracy:\t%.2f" % (float(posCount) * 100 / count)
-                print "POS&LAS:\t%.2f" % (float(poslasCount) * 100 / count)
+                print ("---\nLAS accuracy:\t%.2f" % (float(lasCount) * 100 / count))
+                print ("UAS accuracy:\t%.2f" % (float(uasCount) * 100 / count))
+                print ("POS accuracy:\t%.2f" % (float(posCount) * 100 / count))
+                print ("POS&LAS:\t%.2f" % (float(poslasCount) * 100 / count))
                 
                 score = float(poslasCount) * 100 / count
                 if score >= highestScore:
@@ -172,5 +172,5 @@ if __name__ == '__main__':
                     highestScore = score
                     eId = epoch + 1
                 
-                print "Highest POS&LAS: %.2f at epoch %d" % (highestScore, eId)
+                print ("Highest POS&LAS: %.2f at epoch %d" % (highestScore, eId))
 
