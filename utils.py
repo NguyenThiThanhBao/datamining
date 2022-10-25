@@ -1,6 +1,9 @@
 # coding=utf-8
 from collections import Counter
-import os, re, codecs, string
+import os
+import re
+import codecs
+import string
 
 
 class ConllEntry:
@@ -45,7 +48,8 @@ def vocab(conll_path):
     c2i["EMAIL"] = 4
     c2i["URL"] = 5
 
-    root = ConllEntry(0, '*root*', '*root*', 'ROOT-POS', 'ROOT-CPOS', '_', -1, 'rroot', '_', '_')
+    root = ConllEntry(0, '*root*', '*root*', 'ROOT-POS',
+                      'ROOT-CPOS', '_', -1, 'rroot', '_', '_')
     root.idChars = [1, 2]
     tokens = [root]
 
@@ -53,9 +57,12 @@ def vocab(conll_path):
         tok = line.strip().split('\t')
         if not tok or line.strip() == '':
             if len(tokens) > 1:
-                wordsCount.update([node.norm for node in tokens if isinstance(node, ConllEntry)])
-                posCount.update([node.pos for node in tokens if isinstance(node, ConllEntry)])
-                relCount.update([node.relation for node in tokens if isinstance(node, ConllEntry)])
+                wordsCount.update(
+                    [node.norm for node in tokens if isinstance(node, ConllEntry)])
+                posCount.update(
+                    [node.pos for node in tokens if isinstance(node, ConllEntry)])
+                relCount.update(
+                    [node.relation for node in tokens if isinstance(node, ConllEntry)])
             tokens = [root]
         else:
             if line[0] == '#' or '-' in tok[0] or '.' in tok[0]:
@@ -82,23 +89,28 @@ def vocab(conll_path):
                 tokens.append(entry)
 
     if len(tokens) > 1:
-        wordsCount.update([node.norm for node in tokens if isinstance(node, ConllEntry)])
-        posCount.update([node.pos for node in tokens if isinstance(node, ConllEntry)])
-        relCount.update([node.relation for node in tokens if isinstance(node, ConllEntry)])
+        wordsCount.update(
+            [node.norm for node in tokens if isinstance(node, ConllEntry)])
+        posCount.update(
+            [node.pos for node in tokens if isinstance(node, ConllEntry)])
+        relCount.update(
+            [node.relation for node in tokens if isinstance(node, ConllEntry)])
 
     return (wordsCount, {w: i for i, w in enumerate(wordsCount.keys())}, c2i, posCount.keys(), relCount.keys())
 
 
 def read_conll(fh, c2i):
     # Character vocabulary
-    root = ConllEntry(0, '*root*', '*root*', 'ROOT-POS', 'ROOT-CPOS', '_', -1, 'rroot', '_', '_')
+    root = ConllEntry(0, '*root*', '*root*', 'ROOT-POS',
+                      'ROOT-CPOS', '_', -1, 'rroot', '_', '_')
     root.idChars = [1, 2]
     tokens = [root]
 
     for line in fh:
         tok = line.strip().split('\t')
         if not tok or line.strip() == '':
-            if len(tokens) > 1: yield tokens
+            if len(tokens) > 1:
+                yield tokens
             tokens = [root]
         else:
             if line[0] == '#' or '-' in tok[0] or '.' in tok[0]:
@@ -128,23 +140,31 @@ def read_conll(fh, c2i):
     if len(tokens) > 1:
         yield tokens
 
-#puncts = re.compile("^[\\\!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$")
-brackets = {"-lrb-" : "(", "-rrb-" : ")", "-lsb-" : "[", "-rsb-" : "]", "-lcb-" : "{", "-rcb-" : "}", "&lt;" : "<", "&gt;" : ">", "&amp;" : "&"}
+
+# puncts = re.compile("^[\\\!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$")
+brackets = {"-lrb-": "(", "-rrb-": ")", "-lsb-": "[", "-rsb-": "]",
+            "-lcb-": "{", "-rcb-": "}", "&lt;": "<", "&gt;": ">", "&amp;": "&"}
+
+
 def read_conll_predict(fh, c2i, wordsCount):
+
     # Character vocabulary
-    root = ConllEntry(0, '*root*', '*root*', 'ROOT-POS', 'ROOT-CPOS', '_', -1, 'rroot', '_', '_')
+    root = ConllEntry(0, '*root*', '*root*', 'ROOT-POS',
+                      'ROOT-CPOS', '_', -1, 'rroot', '_', '_')
     root.idChars = [1, 2]
     tokens = [root]
 
-    brackets_train = {} 
+    brackets_train = {}
+
     for word in wordsCount:
-    	if word in brackets:
-    		brackets_train[brackets[word]] = word
+        if word in brackets:
+            brackets_train[brackets[word]] = word
 
     for line in fh:
         tok = line.strip().split('\t')
         if not tok or line.strip() == '':
-            if len(tokens) > 1: yield tokens
+            if len(tokens) > 1:
+                yield tokens
             tokens = [root]
         else:
             if line[0] == '#' or '-' in tok[0] or '.' in tok[0]:
@@ -174,11 +194,11 @@ def read_conll_predict(fh, c2i, wordsCount):
                         tok[1] = "-"
 
                     if entry.norm in brackets:
-                    	entry.norm = brackets[entry.norm]
-                    	tok[1] = entry.norm
+                        entry.norm = brackets[entry.norm]
+                        tok[1] = entry.norm
                     if entry.norm in brackets_train:
-                    	entry.norm = brackets_train[entry.norm]
-                    	tok[1] = str(entry.norm).upper()
+                        entry.norm = brackets_train[entry.norm]
+                        tok[1] = str(entry.norm).upper()
                         if tok[1].lower() in ["&lt;", "&gt;", "&amp;"]:
                             tok[1] = tok[1].lower()
 
@@ -204,7 +224,10 @@ def write_conll(fn, conll_gen):
                 fh.write(str(entry) + '\n')
             fh.write('\n')
 
+
 numberRegex = re.compile("[0-9]+|[0-9]+\\.[0-9]+|[0-9]+[0-9,]+")
+
+
 def normalize(word):
     if numberRegex.match(word):
         return 'NUM'
@@ -216,50 +239,49 @@ def normalize(word):
         w = re.sub(r"''", '"', w)
         return w
 
-#try:
+# try:
 #    import lzma
-#except ImportError:
+# except ImportError:
 #    from backports import lzma
 
+
 def load_embeddings_file(file_name, lower=False):
-        """
-        Load embeddings file. Uncomment comments above and below if file format is .xz
-        """
-        if not os.path.isfile(file_name):
-            print(file_name, "does not exist")
-            return {}, 0
+    """
+    Load embeddings file. Uncomment comments above and below if file format is .xz
+    """
+    if not os.path.isfile(file_name):
+        print(file_name, "does not exist")
+        return {}, 0
 
-        emb={}
-        print("Load pre-trained word embeddings: {}".format(file_name))
+    emb = {}
+    print("Load pre-trained word embeddings: {}".format(file_name))
 
-        open_func = codecs.open
+    open_func = codecs.open
 
-        #if file_name.endswith('.xz'):
-        #    open_func = lzma.open
-        #else:
-        #    open_func = codecs.open
+    # if file_name.endswith('.xz'):
+    #    open_func = lzma.open
+    # else:
+    #    open_func = codecs.open
 
-        with open_func(file_name, 'rb') as f:
-            reader = codecs.getreader('utf-8')(f, errors='ignore')
-            reader.readline()
+    with open_func(file_name, 'rb') as f:
+        reader = codecs.getreader('utf-8')(f, errors='ignore')
+        reader.readline()
 
-            count = 0
-            for line in reader:
-                try:
-                    fields = line.strip().split()
-                    vec = [float(x) for x in fields[1:]]
-                    word = fields[0]
-                    if lower:
-                        word = word.lower()
-                    if word not in emb:
-                        emb[word] = vec
-                except ValueError:
-                    #print("Error converting: {}".format(line))
-                    pass
+        count = 0
+        for line in reader:
+            try:
+                fields = line.strip().split()
+                vec = [float(x) for x in fields[1:]]
+                word = fields[0]
+                if lower:
+                    word = word.lower()
+                if word not in emb:
+                    emb[word] = vec
+            except ValueError:
+                #print("Error converting: {}".format(line))
+                pass
 
-                count += 1
-                if count >= 1500000:
-                    break
-        return emb, len(emb[word])
-
-
+            count += 1
+            if count >= 1500000:
+                break
+    return emb, len(emb[word])
