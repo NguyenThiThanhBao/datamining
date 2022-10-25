@@ -3,7 +3,7 @@ import os
 import sys
 
 def swapUPosXPos(inputFilePath):
-    writer = open((inputFilePath + ".ux2xu"), "w")
+    writer = open(inputFilePath + ".ux2xu", "w")
     lines = open(inputFilePath, "r").readlines()
     for line in lines:
         tok = line.strip().split('\t')
@@ -44,6 +44,6 @@ def swapUPosXPos_folder(inputFolderPath):
                 writer.close()
     
 if __name__ == "__main__":
-    swapUPosXPos_folder("../input/abcffffff/sample")
+    swapUPosXPos_folder("/home/dqnguyen/workspace/UD/UD-conll2017")
     swapUPosXPos(sys.argv[1])
     pass
