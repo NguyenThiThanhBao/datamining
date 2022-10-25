@@ -25,7 +25,7 @@ def swapUPosXPos_folder(inputFolderPath):
         folPath = path.replace("\\", "/") + "/"
         for name in files:
             if name.endswith(".conllu") > 0 or name.endswith(".conll") > 0:
-                print folPath + name
+                print (folPath + name)
                 writer = open(folPath + name + ".ux2xu", "w")
                 lines = open(folPath + name, "r").readlines()
                 for line in lines:

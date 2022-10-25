@@ -275,8 +275,8 @@ class jPosDepLearner:
 
             for iSentence, sentence in enumerate(shuffledData):
                 if iSentence % 500 == 0 and iSentence != 0:
-                    print "Processing sentence number: %d" % iSentence, ", Loss: %.4f" % (
-                                eloss / etotal), ", Time: %.2f" % (time.time() - start)
+                    print ("Processing sentence number: %d" % iSentence, ", Loss: %.4f" % (
+                                eloss / etotal), ", Time: %.2f" % (time.time() - start))
                     start = time.time()
                     eerrors = 0
                     eloss = 0.0
@@ -397,5 +397,5 @@ class jPosDepLearner:
 
                     renew_cg()
 
-        print "Loss: %.4f" % (mloss / iSentence)
+        print ("Loss: %.4f" % (mloss / iSentence))
 
