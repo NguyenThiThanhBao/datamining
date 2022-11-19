@@ -142,10 +142,14 @@ if __name__ == '__main__':
         else:
             print('Extracting vocabulary')
             words, w2i, c2i, pos, rels = utils.vocab(options.conll_train)
-
+            
             with open(os.path.join(options.output, options.params), 'w') as paramsfp:
-                pickle.dump((words, w2i, c2i, pos, rels, options), paramsfp)
-
+            #    pickle.dump(list((words, w2i, c2i, pos, rels, options)), paramsfp)
+                print("words: ",words, end='\n\n\n\n')
+                print("ww2i:  ", w2i, end='\n\n\n\n')
+                print("c2i:   ", c2i, end='\n\n\n\n')
+                print("pos ",pos, end='\n\n\n\n')
+                print("rels   ", rels, end='\n\n\n\n')
             # print 'Initializing joint model'
             parser = learner.jPosDepLearner(
                 words, pos, rels, w2i, c2i, options)
